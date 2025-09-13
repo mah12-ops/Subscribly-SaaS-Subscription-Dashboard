@@ -37,7 +37,6 @@ export const typeDefs = gql`
   }
 
   type Query {
-    health: String!
     me: User
     users: [User!]!
     plans: [Plan!]!

@@ -4,7 +4,6 @@ import { signToken } from "../utils/jwt";
 
 export const resolvers = {
   Query: {
-    health: () => "ok",
     me: async (_: any, __: any, ctx: any) => {
       if (!ctx.user) return null;
       const id = (ctx.user as any).id;
@@ -49,7 +48,6 @@ export const resolvers = {
     subscribe: async (_: any, args: any, ctx: any) => {
       if (!ctx.user) throw new Error("Not authenticated");
       const userId = (ctx.user as any).id;
-      // basic example: create subscription record (no stripe)
       const subscription = await prisma.subscription.create({
         data: {
           userId,
@@ -62,7 +60,6 @@ export const resolvers = {
 
     cancelSubscription: async (_: any, args: any, ctx: any) => {
       if (!ctx.user) throw new Error("Not authenticated");
-      // you may want to check subscription ownership in real app
       const updated = await prisma.subscription.update({
         where: { id: args.subscriptionId },
         data: { status: "CANCELLED" }
@@ -71,7 +68,6 @@ export const resolvers = {
     }
   },
 
-  // resolver-level field resolvers (optional)
   Subscription: {
     user: (parent: any) => prisma.user.findUnique({ where: { id: parent.userId } }),
     plan: (parent: any) => prisma.plan.findUnique({ where: { id: parent.planId } })
