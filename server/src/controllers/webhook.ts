@@ -2,7 +2,7 @@ import { Request, Response } from "express";
 import Stripe from "stripe";
 
 const stripeSecret = process.env.STRIPE_WEBHOOK_SECRET || "";
-const stripe = (process.env.STRIPE_SECRET_KEY) ? new Stripe(process.env.STRIPE_SECRET_KEY, { apiVersion: "2022-11-15" }) : null;
+const stripe = (process.env.STRIPE_SECRET_KEY) ? new Stripe(process.env.STRIPE_SECRET_KEY, { apiVersion : "2025-08-27.basil"}) : null;
 
 export const handleStripeWebhook = async (req: Request, res: Response) => {
   const raw = req.body as Buffer; // bodyParser.raw provided in index.ts

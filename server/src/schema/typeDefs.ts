@@ -10,7 +10,7 @@ export const typeDefs = gql`
     name: String!
     email: String!
     role: Role!
-    subscriptions: [Subscription!]
+    subscriptions: [Subscription!]!      # added non-nullable subscriptions
     createdAt: String!
     updatedAt: String!
   }
@@ -21,6 +21,7 @@ export const typeDefs = gql`
     price: Float!
     interval: Interval!
     description: String
+    subscriptions: [Subscription!]!      # added subscriptions
     createdAt: String!
     updatedAt: String!
   }
@@ -37,7 +38,8 @@ export const typeDefs = gql`
   }
 
   type Query {
-    me: User
+    health: String!
+    me: User                           # added me query
     users: [User!]!
     plans: [Plan!]!
     subscriptions: [Subscription!]!

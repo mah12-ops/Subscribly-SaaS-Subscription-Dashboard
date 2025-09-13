@@ -4,6 +4,7 @@ import { signToken } from "../utils/jwt";
 
 export const resolvers = {
   Query: {
+    health: () => "ok",
     me: async (_: any, __: any, ctx: any) => {
       if (!ctx.user) return null;
       const id = (ctx.user as any).id;
@@ -48,23 +49,21 @@ export const resolvers = {
     subscribe: async (_: any, args: any, ctx: any) => {
       if (!ctx.user) throw new Error("Not authenticated");
       const userId = (ctx.user as any).id;
-      const subscription = await prisma.subscription.create({
+      return prisma.subscription.create({
         data: {
           userId,
           planId: args.planId,
           status: "ACTIVE"
         }
       });
-      return subscription;
     },
 
     cancelSubscription: async (_: any, args: any, ctx: any) => {
       if (!ctx.user) throw new Error("Not authenticated");
-      const updated = await prisma.subscription.update({
+      return prisma.subscription.update({
         where: { id: args.subscriptionId },
         data: { status: "CANCELLED" }
       });
-      return updated;
     }
   },
 
