@@ -6,6 +6,8 @@ import Features from "../components/Features";
 import Testimonials from "../components/Testimonials";
 import Footer from "../components/Footer";
 import Pricing from "../components/Pricing";
+import FAQ from "../components/FAQ";
+import CTASection from "../components/CTA";
 
 export default function LandingPage() {
   return (
@@ -19,6 +21,8 @@ export default function LandingPage() {
         <Features />
         <Pricing />
         <Testimonials />
+        <FAQ />
+        <CTASection />
       </main>
 
       {/* Footer */}
