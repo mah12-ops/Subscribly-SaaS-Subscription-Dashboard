@@ -15,7 +15,7 @@ export default function SignupPage() {
     resolver: zodResolver(signupSchema),
   });
 
-  const onSubmit = (data) => {
+  const onSubmit = (data:any) => {
     console.log("Signup data", data);
     // axios.post("/api/auth/signup", data)
   };

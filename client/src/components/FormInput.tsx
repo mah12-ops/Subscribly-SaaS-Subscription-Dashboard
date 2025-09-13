@@ -1,5 +1,5 @@
 // src/components/FormInput.jsx
-export default function FormInput({ label, register, name, errors, type="text", placeholder }) {
+export default function FormInput({ label, register, name, errors, type="text", placeholder }:any) {
   return (
     <div className="mb-4 text-left">
       <label className="block mb-1 text-gray-300">{label}</label>
