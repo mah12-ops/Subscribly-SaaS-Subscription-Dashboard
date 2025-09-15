@@ -3,7 +3,7 @@ import express, { Application } from "express";
 import cors from "cors";
 import { ApolloServer } from "apollo-server-express";
 import bodyParser from "body-parser";
-import apiRoutes from "./routes/api";
+import authRoutes from "./routes/api";
 import { typeDefs } from "./schema/typeDefs";
 import { resolvers } from "./resolvers";
 import { createContext } from "./context";
@@ -32,7 +32,7 @@ app.use(cors({
   app.use(express.json());
 
   // REST routes (health + auth)
-  app.use("/api", apiRoutes);
+  app.use("/api", authRoutes);
 
 
   // Rate limiter for auth endpoints

@@ -3,6 +3,7 @@ import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import FormInput from "../components/FormInput";
+import axios from "axios";
 
 const signupSchema = z.object({
   name: z.string().min(2, "Name is required"),
@@ -17,7 +18,7 @@ export default function SignupPage() {
 
   const onSubmit = (data:any) => {
     console.log("Signup data", data);
-    // axios.post("/api/auth/signup", data)
+    axios.post("/api/auth/signup", data)
   };
 
   return (
