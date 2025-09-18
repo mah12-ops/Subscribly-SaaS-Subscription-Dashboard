@@ -1,3 +1,4 @@
+// src/components/FAQSection.jsx
 import { useState } from "react";
 
 const faqs = [
@@ -31,33 +32,36 @@ export default function FAQSection() {
   };
 
   return (
-    <section className="py-20 bg-white dark:bg-gray-950">
+    <section className="relative py-24 bg-gray-950 text-white">
+      {/* background glow */}
+      <div className="absolute -z-10 top-20 left-1/2 -translate-x-1/2 w-[700px] h-[700px] bg-gradient-radial from-indigo-500/30 via-purple-500/20 to-transparent rounded-full blur-3xl animate-pulse" />
+
       <div className="max-w-4xl mx-auto px-6 text-center">
-        <h2 className="text-3xl md:text-4xl font-extrabold bg-gradient-to-r from-emerald-600 to-teal-500 bg-clip-text text-transparent">
+        <h2 className="text-4xl md:text-5xl font-extrabold bg-gradient-to-r from-indigo-400 via-purple-400 to-pink-400 bg-clip-text text-transparent">
           Frequently Asked Questions
         </h2>
-        <p className="mt-3 text-gray-600 dark:text-gray-400">
-          Everything you need to know about using our subscription platform.
+        <p className="mt-4 text-lg text-gray-300">
+          Everything you need to know about Subscribely, all in one place.
         </p>
       </div>
 
-      <div className="mt-12 max-w-3xl mx-auto px-6 space-y-4">
+      <div className="mt-14 max-w-3xl mx-auto px-6 space-y-4">
         {faqs.map((faq, index) => (
           <div
             key={index}
-            className="border border-gray-200 dark:border-gray-700 rounded-xl shadow-sm"
+            className="border border-indigo-500/40 rounded-2xl shadow-lg bg-gray-900/60 backdrop-blur-sm overflow-hidden transition"
           >
             <button
               onClick={() => toggleFAQ(index)}
-              className="w-full flex justify-between items-center px-5 py-4 text-left text-lg font-semibold text-gray-900 dark:text-white"
+              className="w-full flex justify-between items-center px-6 py-5 text-left text-lg font-semibold text-indigo-300 hover:text-pink-300 transition"
             >
               {faq.question}
-              <span className="ml-4 text-emerald-600 dark:text-teal-400">
+              <span className="ml-4 text-indigo-400 text-2xl font-bold">
                 {openIndex === index ? "−" : "+"}
               </span>
             </button>
             {openIndex === index && (
-              <div className="px-5 pb-4 text-gray-600 dark:text-gray-400">
+              <div className="px-6 pb-5 text-gray-300 border-t border-indigo-500/30">
                 {faq.answer}
               </div>
             )}

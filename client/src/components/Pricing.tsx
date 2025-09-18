@@ -24,7 +24,7 @@ export default function Pricing() {
   return (
     <section className="py-20 bg-gradient-to-b from-dark to-black text-white">
       <div className="max-w-6xl mx-auto px-6 text-center">
-        <h2 className="text-4xl font-bold mb-10 bg-gradient-to-r from-emerald-400 to-teal-300 bg-clip-text text-transparent">
+        <h2 className="text-4xl font-bold bg-gradient-to-r from-teal-400 via-indigo-400 to-pink-400 bg-clip-text text-transparent mb-12">
           Simple, Transparent Pricing
         </h2>
         <div className="grid md:grid-cols-3 gap-8">
@@ -38,12 +38,12 @@ export default function Pricing() {
               <p className="text-gray-400 mt-2">{plan.desc}</p>
               <ul className="mt-6 space-y-2 text-left">
                 {plan.features.map((f, i) => (
-                  <li key={i} className="flex items-center gap-2">
-                    ✅ <span>{f}</span>
+                  <li key={i} className="flex items-center gap-3">
+                    .  <span>{f}</span>
                   </li>
                 ))}
               </ul>
-              <button className="mt-6 w-full py-3 bg-emerald-600 hover:bg-emerald-700 rounded-xl font-medium">
+              <button className="mt-6 w-full py-3 text-white bg-indigo-400  hover:bg-indigo-600  rounded-xl font-medium">
                 Choose Plan
               </button>
             </div>

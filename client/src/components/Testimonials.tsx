@@ -21,7 +21,7 @@ export default function Testimonials() {
   return (
     <section className="py-20 bg-dark text-white">
       <div className="max-w-6xl mx-auto px-6 text-center">
-        <h2 className="text-4xl font-bold mb-12 bg-gradient-to-r from-emerald-400 to-teal-300 bg-clip-text text-transparent">
+      <h2 className="text-4xl font-bold bg-gradient-to-r from-teal-400 via-indigo-400 to-pink-400 bg-clip-text text-transparent mb-12">
           Loved by SaaS Teams Everywhere
         </h2>
         <div className="grid md:grid-cols-3 gap-8">
