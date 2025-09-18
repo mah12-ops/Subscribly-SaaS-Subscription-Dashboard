@@ -2,9 +2,9 @@
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import FormInput from "../components/FormInput";
 
 const loginSchema = z.object({
@@ -25,26 +25,24 @@ export default function LoginPage() {
   const [loading, setLoading] = useState(false);
   const [errorMsg, setErrorMsg] = useState("");
 
-  const onSubmit = async (data:any) => {
+  const onSubmit = async (formData:any) => {
     try {
       setLoading(true);
       setErrorMsg("");
 
-      const res = await axios.post("http://localhost:8080/api/auth/login", data, {
-        withCredentials: true, // in case you're using cookies/sessions
-      });
+      const res = await axios.post(
+        "http://localhost:8080/api/auth/login",
+        formData,
+        { withCredentials: true }
+      );
 
-      if (res.data?.success) {
-        // Save token if returned
-        if (res.data.token) {
-          localStorage.setItem("token", res.data.token);
-        }
-        navigate("/dashboard"); // ✅ redirect after login
-      } else {
-        setErrorMsg(res.data?.message || "Login failed");
-      }
+      console.log("✅ Login success:", res.data);
+
+      // Navigate after success
+      navigate("/dashboard");
     } catch (err:any) {
-      setErrorMsg(err.response?.data?.message || "Server error, try again.");
+      console.error("❌ Login error:", err.response?.data || err.message);
+      setErrorMsg(err.response?.data?.message || "Invalid email or password");
     } finally {
       setLoading(false);
     }
@@ -89,16 +87,6 @@ export default function LoginPage() {
         >
           {loading ? "Logging in..." : "Login"}
         </button>
-
-        <p className="text-sm text-center text-gray-300 mt-4">
-          Don’t have an account?{" "}
-          <a
-            href="/signup"
-            className="text-accent font-medium hover:underline"
-          >
-            Sign up
-          </a>
-        </p>
       </form>
     </div>
   );
