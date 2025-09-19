@@ -4,9 +4,12 @@ import LandingPage from "./pages/LandingPage";
 import LoginPage from "./pages/LoginPage";
 import SignupPage from "./pages/SignupPage";
 import DashboardPage from "./pages/DashboardPage";
+import { ApolloProvider } from "@apollo/client/react";
+import { client } from "./lib/api";
 
 export default function App() {
   return (
+     <ApolloProvider client={client}>
     <Router>
       <Routes>
         <Route path="/" element={<LandingPage />} />
@@ -15,5 +18,6 @@ export default function App() {
         <Route path="/dashboard" element={<DashboardPage />} />
       </Routes>
     </Router>
+    </ApolloProvider>
   );
 }
