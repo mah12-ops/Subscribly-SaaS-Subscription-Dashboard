@@ -183,13 +183,14 @@
 // export default DashboardPage;
 // src/pages/DashboardPage.tsx
 import React from "react";
-import { useQuery, useMutation } from "@apollo/client";
+
 
 import {
   GET_SUBSCRIPTIONS,
   SUBSCRIBE_PLAN,
   CANCEL_SUBSCRIPTION,
 } from "../lib/api";
+import { useMutation, useQuery } from "@apollo/client/react";
 
 interface Plan {
   id: number;
