@@ -2,7 +2,7 @@ import { useQuery, useMutation } from "@apollo/client/react";
 import { GET_SUBSCRIPTIONS, CANCEL_SUBSCRIPTION } from "../lib/api";
 import type { Subscription } from "../lib/api";
 
-export default function Subscription() {
+export default function Subscriptions() {
   const { data, refetch } = useQuery<{ subscriptions: Subscription[] }>(GET_SUBSCRIPTIONS);
   const [cancelSubscription] = useMutation(CANCEL_SUBSCRIPTION, { onCompleted: () => refetch() });
 
