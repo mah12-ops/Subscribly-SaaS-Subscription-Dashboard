@@ -1,13 +1,17 @@
+// src/pages/Invoices.tsx
 import { useQuery } from "@apollo/client/react";
 import { GET_INVOICES } from "../lib/api";
 import type { Invoice } from "../lib/api";
 
 export default function Invoices() {
-  const { data } = useQuery<{ invoices: Invoice[] }>(GET_INVOICES);
+  const { data, loading, error } = useQuery<{ invoices: Invoice[] }>(GET_INVOICES);
   const invoices = data?.invoices || [];
 
+  if (loading) return <p className="text-gray-400 p-6">Loading invoices...</p>;
+  if (error) return <p className="text-red-500 p-6">Error fetching invoices: {error.message}</p>;
+
   return (
-    <div className="p-6">
+    <div className="p-6 space-y-6">
       <h1 className="text-3xl font-bold bg-gradient-to-r from-indigo-400 via-purple-400 to-pink-400 bg-clip-text text-transparent animate-pulse">
         Invoices
       </h1>
@@ -19,19 +23,40 @@ export default function Invoices() {
           <thead className="bg-gray-800">
             <tr>
               <th className="px-4 py-2 text-left">ID</th>
+              <th className="px-4 py-2 text-left">Plan</th>
               <th className="px-4 py-2 text-left">Amount</th>
               <th className="px-4 py-2 text-left">Date</th>
               <th className="px-4 py-2 text-left">Status</th>
+              <th className="px-4 py-2 text-left">PDF</th>
             </tr>
           </thead>
           <tbody>
             {invoices.map((inv) => (
               <tr key={inv.id} className="border-t border-gray-700">
                 <td className="px-4 py-2">{inv.id}</td>
-                <td className="px-4 py-2">${inv.amount}</td>
-                <td className="px-4 py-2">{inv.date}</td>
-                <td className={`px-4 py-2 font-semibold ${inv.status === "PAID" ? "text-emerald-400" : "text-red-500"}`}>
-                  {inv.status}
+                <td className="px-4 py-2">{inv.subscription?.plan?.name || "-"}</td>
+                <td className="px-4 py-2">${inv.amount.toFixed(2)}</td>
+                <td className="px-4 py-2">{new Date(inv.createdAt).toLocaleDateString()}</td>
+                <td
+                  className={`px-4 py-2 font-semibold ${
+                    inv.subscription?.status === "ACTIVE" ? "text-emerald-400" : "text-red-500"
+                  }`}
+                >
+                  {inv.subscription?.status || "-"}
+                </td>
+                <td className="px-4 py-2">
+                  {inv.pdfUrl ? (
+                    <a
+                      href={inv.pdfUrl}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="text-indigo-400 hover:underline"
+                    >
+                      View PDF
+                    </a>
+                  ) : (
+                    "-"
+                  )}
                 </td>
               </tr>
             ))}

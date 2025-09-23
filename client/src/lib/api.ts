@@ -38,13 +38,15 @@ export interface Subscription {
   userId: string;
   planId: string;
   plan?: Plan;
+
 }
 
 export interface Invoice {
   id: string;
   amount: number;
-  date: string;
-  status: string;
+  createdAt: string;           // matches Prisma DateTime
+  pdfUrl?: string;             // optional PDF link
+  subscription: Subscription;  // single subscription per invoice
 }
 
 // ----------------------
@@ -95,11 +97,20 @@ export const GET_INVOICES = gql`
     invoices {
       id
       amount
-      date
-      status
+      pdfUrl
+      createdAt
+      subscription {
+        id
+        status
+        plan {
+          id
+          name
+        }
+      }
     }
   }
 `;
+
 
 // ----------------------
 // Mutations

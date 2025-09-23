@@ -30,7 +30,7 @@ interface SidebarProps {
 
 export default function Sidebar({ role }: SidebarProps) {
   return (
-    <aside className="w-64 h-screen bg-black text-gray-400 flex flex-col p-6">
+    <aside className="w-64 h-screen bg-black  text-gray-400 flex flex-col p-6">
       <h1 className="text-2xl font-bold mb-10 bg-gradient-to-r from-indigo-400 via-purple-400 to-pink-400 bg-clip-text text-transparent animate-pulse">
         Subscribely
       </h1>
@@ -44,7 +44,7 @@ export default function Sidebar({ role }: SidebarProps) {
               to={link.path}
               className={({ isActive }) =>
                 `flex items-center gap-3 px-3 py-2 rounded hover:bg-gray-800 hover:text-white transition ${
-                  isActive ? "bg-gray-900 text-emerald-400" : ""
+                  isActive ? "bg-gray-900 text-purple-400" : ""
                 }`
               }
             >

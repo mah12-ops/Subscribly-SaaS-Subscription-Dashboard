@@ -65,7 +65,7 @@ export default function Dashboard() {
   );
 
   return (
-    <div className="flex min-h-screen bg-black text-white">
+    <div className="flex min-h-screen bg-black overflow-x-hidden text-white">
       {/* Sidebar */}
       <Sidebar role={me?.role} />
 
@@ -74,7 +74,7 @@ export default function Dashboard() {
         {/* Top Bar */}
 <div className="flex justify-between items-center mb-6">
   {/* Dashboard Title */}
-  <h1 className="text-4xl font-bold bg-gradient-to-r from-indigo-400 via-purple-400 to-pink-400 bg-clip-text text-transparent animate-pulse">
+  <h1 className="text-4xl font-bold bg-gradient-to-r from-indigo-400 via-purple-400 to-pink-400 bg-clip-text text-transparent ">
     Dashboard
   </h1>
 
@@ -85,7 +85,7 @@ export default function Dashboard() {
       <BellIcon className="w-6 h-6 text-gray-300 hover:text-white transition" />
       {/* Red dot for new notifications */}
       {me?.hasNewNotifications && (
-        <span className="absolute -top-1 -right-1 bg-red-600 w-2 h-2 rounded-full animate-pulse" />
+        <span className="absolute -top-1 -right-1 bg-red-600 w-2 h-2 rounded-full " />
       )}
     </button>
 
@@ -111,27 +111,27 @@ export default function Dashboard() {
 
 
         {/* Stats Cards */}
-        <div className="grid md:grid-cols-4 gap-6">
+        <div className="grid md:grid-cols-4 px-8 gap-6">
           <div className="p-6 bg-gray-900 rounded-xl shadow">
-            <h2 className="text-lg font-semibold bg-gradient-to-r from-indigo-400 via-purple-400 to-pink-400 bg-clip-text text-transparent animate-pulse">
+            <h2 className="text-lg font-semibold bg-gradient-to-r from-indigo-400 via-purple-400 to-pink-400 bg-clip-text text-transparent">
               Total Plans
             </h2>
             <p className="text-3xl mt-2">{plans.length}</p>
           </div>
           <div className="p-6 bg-gray-900 rounded-xl shadow">
-            <h2 className="text-lg font-semibold bg-gradient-to-r from-indigo-400 via-purple-400 to-pink-400 bg-clip-text text-transparent animate-pulse">
+            <h2 className="text-lg font-semibold bg-gradient-to-r from-indigo-400 via-purple-400 to-pink-400 bg-clip-text text-transparent ">
               Your Subscriptions
             </h2>
             <p className="text-3xl mt-2">{subscriptions.length}</p>
           </div>
           <div className="p-6 bg-gray-900 rounded-xl shadow">
-            <h2 className="text-lg font-semibold bg-gradient-to-r from-indigo-400 via-purple-400 to-pink-400 bg-clip-text text-transparent animate-pulse">
+            <h2 className="text-lg font-semibold bg-gradient-to-r from-indigo-400 via-purple-400 to-pink-400 bg-clip-text text-transparent ">
               Invoices
             </h2>
             <p className="text-3xl mt-2">{invoices.length}</p>
           </div>
           <div className="p-6 bg-gray-900 rounded-xl shadow">
-            <h2 className="text-lg font-semibold bg-gradient-to-r from-indigo-400 via-purple-400 to-pink-400 bg-clip-text text-transparent animate-pulse">
+            <h2 className="text-lg font-semibold bg-gradient-to-r from-indigo-400 via-purple-400 to-pink-400 bg-clip-text text-transparent ">
               Revenue
             </h2>
             <p className="text-3xl mt-2">${totalRevenue}</p>
@@ -140,7 +140,7 @@ export default function Dashboard() {
 
         {/* Charts */}
         <div className="bg-gray-900 p-6 rounded-xl shadow">
-          <h2 className="text-xl font-semibold mb-4 bg-gradient-to-r from-indigo-400 via-purple-400 to-pink-400 bg-clip-text text-transparent animate-pulse">
+          <h2 className="text-xl font-semibold mb-4 bg-gradient-to-r from-indigo-400 via-purple-400 to-pink-400 bg-clip-text text-transparent ">
             Subscriptions per Plan
           </h2>
           <Bar data={chartData} options={{ responsive: true }} />
@@ -148,7 +148,7 @@ export default function Dashboard() {
 
         {/* Plans Section */}
         <section>
-          <h2 className="text-xl font-semibold mb-4 bg-gradient-to-r from-indigo-400 via-purple-400 to-pink-400 bg-clip-text text-transparent animate-pulse">
+          <h2 className="text-xl font-semibold mb-4 bg-gradient-to-r from-indigo-400 via-purple-400 to-pink-400 bg-clip-text text-transparent ">
             Available Plans
           </h2>
           <div className="grid gap-6 md:grid-cols-3">
@@ -159,7 +159,7 @@ export default function Dashboard() {
                 <p className="text-xl font-semibold mt-2">${plan.price}/{plan.interval}</p>
                 <button
                   onClick={() => subscribe({ variables: { planId: plan.id } })}
-                  className="mt-3 bg-emerald-600 text-white px-4 py-2 rounded-lg hover:bg-emerald-700"
+                  className="mt-3 bg-purple-500 text-white px-4 py-2 rounded-lg hover:bg-purple-700"
                 >
                   Subscribe
                 </button>
@@ -170,7 +170,7 @@ export default function Dashboard() {
 
         {/* Recent Activity */}
         <section>
-          <h2 className="text-xl font-semibold mb-4 bg-gradient-to-r from-indigo-400 via-purple-400 to-pink-400 bg-clip-text text-transparent animate-pulse">
+          <h2 className="text-xl font-semibold mb-4 bg-gradient-to-r from-indigo-400 via-purple-400 to-pink-400 bg-clip-text text-transparent ">
             Recent Activity
           </h2>
           <ul className="space-y-2 max-h-72 overflow-y-auto">
@@ -179,7 +179,7 @@ export default function Dashboard() {
                 <span>
                   Subscribed to <strong>{sub.plan?.name}</strong>
                 </span>
-                <span className={`font-semibold ${sub.status === "ACTIVE" ? "text-emerald-400" : "text-red-500"}`}>
+                <span className={`font-semibold ${sub.status === "ACTIVE" ? "text-purple-400" : "text-red-500"}`}>
                   {sub.status}
                 </span>
               </li>
@@ -187,7 +187,7 @@ export default function Dashboard() {
             {invoices.slice(-5).map((inv) => (
               <li key={inv.id} className="p-3 bg-gray-900 rounded flex justify-between">
                 <span>Invoice #{inv.id}</span>
-                <span className={`font-semibold ${inv.status === "PAID" ? "text-emerald-400" : "text-red-500"}`}>
+                <span className={`font-semibold ${inv.status === "PAID" ? "text-purple-400" : "text-red-500"}`}>
                   {inv.status}
                 </span>
               </li>

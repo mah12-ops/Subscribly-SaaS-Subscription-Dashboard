@@ -14,6 +14,19 @@ export const resolvers = {
     users: async () => prisma.user.findMany(),
     plans: async () => prisma.plan.findMany(),
     subscriptions: async () => prisma.subscription.findMany(),
+     invoices: async (_: any, __: any, ctx: any) => {
+    if (!ctx.user) throw new Error("Not authenticated");
+    const userId = (ctx.user as any).id;
+
+    return prisma.invoice.findMany({
+      where: {
+        subscription: {
+          userId, // fetch only invoices for subscriptions of this user
+        },
+      },
+      orderBy: { createdAt: "desc" },
+    });
+  },
   },
 
   Mutation: {
@@ -81,5 +94,10 @@ login: async (_: any, args: any) => {
 
   Plan: {
     subscriptions: (parent: any) => prisma.subscription.findMany({ where: { planId: parent.id } })
-  }
+  },
+  Invoice: {
+  subscription: (parent: any) =>
+    prisma.subscription.findUnique({ where: { id: parent.subscriptionId } }),
+}
+
 };
