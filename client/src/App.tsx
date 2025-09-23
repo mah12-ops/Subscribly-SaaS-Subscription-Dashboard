@@ -5,7 +5,8 @@ import LoginPage from "./pages/LoginPage";
 import SignupPage from "./pages/SignupPage";
 import DashboardPage from "./pages/DashboardPage";
 import { ApolloProvider } from "@apollo/client/react";
-import { client } from "./lib/api";
+import { client } from "./lib/apollolient";
+
 
 export default function App() {
   return (

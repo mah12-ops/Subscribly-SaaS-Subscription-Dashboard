@@ -1,12 +1,11 @@
-// src/lib/apolloClient.ts
 import { ApolloClient, InMemoryCache, createHttpLink } from "@apollo/client";
 import { setContext } from "@apollo/client/link/context";
 
 const httpLink = createHttpLink({
-  uri: "http://localhost:8080/api/graphql", // your backend GraphQL endpoint
+  uri: "http://localhost:8080/graphql", // ✅ FIX: remove /api
 });
 
-const authLink = setContext((_:any, { headers }:any) => {
+const authLink = setContext((_: any, { headers }: any) => {
   const token = localStorage.getItem("token");
   return {
     headers: {
