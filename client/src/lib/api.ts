@@ -14,11 +14,15 @@ export const client = new ApolloClient({
 // GraphQL Types
 // ----------------------
 export interface Me {
-  id: string;
+  id: number;
   name: string;
   email: string;
-  role?: string;
+  role: string;
+  avatar?: string;                  // optional
+  hasNewNotifications?: boolean;   // optional
+  subscriptions: Subscription[];
 }
+
 
 export interface Plan {
   id: string;
@@ -53,6 +57,8 @@ export const GET_ME = gql`
       name
       email
       role
+      avatar        # <-- Add this to your Prisma User model
+      hasNewNotifications 
     }
   }
 `;

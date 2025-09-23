@@ -12,6 +12,8 @@ import type { Me,
   Plan,
   Subscription,
   Invoice,} from "../../lib/api"
+
+
 import { Bar } from "react-chartjs-2";
 import {
   Chart as ChartJS,
@@ -22,6 +24,7 @@ import {
   Tooltip,
   Legend,
 } from "chart.js";
+import { BellIcon, ChevronDownIcon } from "@heroicons/react/24/solid";
 import Sidebar from "./Sidebar";
 
 ChartJS.register(CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend);
@@ -55,49 +58,99 @@ export default function Dashboard() {
     ],
   };
 
+  // Calculate revenue for mini cards
+  const totalRevenue = subscriptions.reduce(
+    (acc, sub) => acc + (sub.plan?.price || 0),
+    0
+  );
+
   return (
     <div className="flex min-h-screen bg-black text-white">
       {/* Sidebar */}
       <Sidebar role={me?.role} />
 
       {/* Main Content */}
-      <div className="flex-1 p-8 space-y-10">
-        {/* Header */}
-        <header className="flex justify-between items-center">
-          <h1 className="text-3xl font-bold text-gradient">Dashboard</h1>
-          <div>
-            <p>{me?.name}</p>
-            <button className="ml-4 px-3 py-1 bg-emerald-600 rounded hover:bg-emerald-700">
-              Edit Profile
-            </button>
-          </div>
-        </header>
+      <div className="flex-1 p-8 space-y-8">
+        {/* Top Bar */}
+<div className="flex justify-between items-center mb-6">
+  {/* Dashboard Title */}
+  <h1 className="text-4xl font-bold bg-gradient-to-r from-indigo-400 via-purple-400 to-pink-400 bg-clip-text text-transparent animate-pulse">
+    Dashboard
+  </h1>
+
+  {/* Right Controls */}
+  <div className="flex items-center gap-4">
+    {/* Notifications */}
+    <button className="relative">
+      <BellIcon className="w-6 h-6 text-gray-300 hover:text-white transition" />
+      {/* Red dot for new notifications */}
+      {me?.hasNewNotifications && (
+        <span className="absolute -top-1 -right-1 bg-red-600 w-2 h-2 rounded-full animate-pulse" />
+      )}
+    </button>
+
+    {/* Profile Photo & Dropdown */}
+    <div className="relative group">
+      <img
+        src={me?.avatar || "/default-avatar.png"}
+        alt={me?.name}
+        className="w-10 h-10 rounded-full cursor-pointer border-2 border-gray-600 hover:border-emerald-400 transition"
+      />
+      {/* Dropdown Menu */}
+      <div className="absolute right-0 mt-2 w-40 bg-black text-white rounded-lg shadow-lg opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none group-hover:pointer-events-auto z-10">
+        <button className="block w-full text-left px-4 py-2 hover:bg-gray-800">
+          Edit Profile
+        </button>
+        <button className="block w-full text-left px-4 py-2 hover:bg-gray-800">
+          Logout
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+
 
         {/* Stats Cards */}
-        <div className="grid md:grid-cols-3 gap-6">
+        <div className="grid md:grid-cols-4 gap-6">
           <div className="p-6 bg-gray-900 rounded-xl shadow">
-            <h2 className="text-lg font-semibold">Total Plans</h2>
+            <h2 className="text-lg font-semibold bg-gradient-to-r from-indigo-400 via-purple-400 to-pink-400 bg-clip-text text-transparent animate-pulse">
+              Total Plans
+            </h2>
             <p className="text-3xl mt-2">{plans.length}</p>
           </div>
           <div className="p-6 bg-gray-900 rounded-xl shadow">
-            <h2 className="text-lg font-semibold">Your Subscriptions</h2>
+            <h2 className="text-lg font-semibold bg-gradient-to-r from-indigo-400 via-purple-400 to-pink-400 bg-clip-text text-transparent animate-pulse">
+              Your Subscriptions
+            </h2>
             <p className="text-3xl mt-2">{subscriptions.length}</p>
           </div>
           <div className="p-6 bg-gray-900 rounded-xl shadow">
-            <h2 className="text-lg font-semibold">Invoices</h2>
+            <h2 className="text-lg font-semibold bg-gradient-to-r from-indigo-400 via-purple-400 to-pink-400 bg-clip-text text-transparent animate-pulse">
+              Invoices
+            </h2>
             <p className="text-3xl mt-2">{invoices.length}</p>
+          </div>
+          <div className="p-6 bg-gray-900 rounded-xl shadow">
+            <h2 className="text-lg font-semibold bg-gradient-to-r from-indigo-400 via-purple-400 to-pink-400 bg-clip-text text-transparent animate-pulse">
+              Revenue
+            </h2>
+            <p className="text-3xl mt-2">${totalRevenue}</p>
           </div>
         </div>
 
         {/* Charts */}
         <div className="bg-gray-900 p-6 rounded-xl shadow">
-          <h2 className="text-xl font-semibold mb-4">Subscriptions per Plan</h2>
+          <h2 className="text-xl font-semibold mb-4 bg-gradient-to-r from-indigo-400 via-purple-400 to-pink-400 bg-clip-text text-transparent animate-pulse">
+            Subscriptions per Plan
+          </h2>
           <Bar data={chartData} options={{ responsive: true }} />
         </div>
 
         {/* Plans Section */}
         <section>
-          <h2 className="text-xl font-semibold mb-4">Available Plans</h2>
+          <h2 className="text-xl font-semibold mb-4 bg-gradient-to-r from-indigo-400 via-purple-400 to-pink-400 bg-clip-text text-transparent animate-pulse">
+            Available Plans
+          </h2>
           <div className="grid gap-6 md:grid-cols-3">
             {plans.map((plan) => (
               <div key={plan.id} className="border rounded-xl p-5 shadow hover:shadow-lg transition bg-gray-800">
@@ -113,6 +166,33 @@ export default function Dashboard() {
               </div>
             ))}
           </div>
+        </section>
+
+        {/* Recent Activity */}
+        <section>
+          <h2 className="text-xl font-semibold mb-4 bg-gradient-to-r from-indigo-400 via-purple-400 to-pink-400 bg-clip-text text-transparent animate-pulse">
+            Recent Activity
+          </h2>
+          <ul className="space-y-2 max-h-72 overflow-y-auto">
+            {subscriptions.slice(-5).map((sub) => (
+              <li key={sub.id} className="p-3 bg-gray-900 rounded flex justify-between">
+                <span>
+                  Subscribed to <strong>{sub.plan?.name}</strong>
+                </span>
+                <span className={`font-semibold ${sub.status === "ACTIVE" ? "text-emerald-400" : "text-red-500"}`}>
+                  {sub.status}
+                </span>
+              </li>
+            ))}
+            {invoices.slice(-5).map((inv) => (
+              <li key={inv.id} className="p-3 bg-gray-900 rounded flex justify-between">
+                <span>Invoice #{inv.id}</span>
+                <span className={`font-semibold ${inv.status === "PAID" ? "text-emerald-400" : "text-red-500"}`}>
+                  {inv.status}
+                </span>
+              </li>
+            ))}
+          </ul>
         </section>
       </div>
     </div>
