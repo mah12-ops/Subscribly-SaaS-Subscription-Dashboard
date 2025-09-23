@@ -1,14 +1,5 @@
 // src/api.ts
-import { ApolloClient, InMemoryCache, HttpLink, gql } from "@apollo/client";
-
-export const client = new ApolloClient({
-  link: new HttpLink({
-    uri: "http://localhost:8080/graphql", // your backend GraphQL endpoint
-    credentials: "include", // if you use cookies/session
-  }),
-  cache: new InMemoryCache(),
-});
-
+import { gql } from "@apollo/client";
 
 // -------------------- GraphQL Queries --------------------
 
@@ -30,6 +21,8 @@ export const GET_SUBSCRIPTIONS = gql`
     }
   }
 `;
+
+// -------------------- GraphQL Mutations --------------------
 
 // Subscribe to a plan
 export const SUBSCRIBE_PLAN = gql`
