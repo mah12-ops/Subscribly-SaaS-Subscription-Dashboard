@@ -19,7 +19,7 @@ export default function Invoices() {
       {invoices.length === 0 ? (
         <p className="text-gray-400 mt-4">No invoices found.</p>
       ) : (
-        <table className="min-w-full bg-gray-900 text-white rounded-lg shadow mt-4">
+        <table className="min-w-full bg-gray-900 text-white rounded-lg shadow mt-4 overflow-hidden">
           <thead className="bg-gray-800">
             <tr>
               <th className="px-4 py-2 text-left">ID</th>
@@ -34,15 +34,17 @@ export default function Invoices() {
             {invoices.map((inv) => (
               <tr key={inv.id} className="border-t border-gray-700">
                 <td className="px-4 py-2">{inv.id}</td>
-                <td className="px-4 py-2">{inv.subscription?.plan?.name || "-"}</td>
+                <td className="px-4 py-2">{inv.subscription?.plan?.name ?? "-"}</td>
                 <td className="px-4 py-2">${inv.amount.toFixed(2)}</td>
                 <td className="px-4 py-2">{new Date(inv.createdAt).toLocaleDateString()}</td>
                 <td
                   className={`px-4 py-2 font-semibold ${
-                    inv.subscription?.status === "ACTIVE" ? "text-emerald-400" : "text-red-500"
+                    inv.subscription?.status === "ACTIVE"
+                      ? "text-emerald-400"
+                      : "text-red-500"
                   }`}
                 >
-                  {inv.subscription?.status || "-"}
+                  {inv.subscription?.status ?? "-"}
                 </td>
                 <td className="px-4 py-2">
                   {inv.pdfUrl ? (

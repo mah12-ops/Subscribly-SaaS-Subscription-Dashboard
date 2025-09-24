@@ -98,12 +98,14 @@ export const GET_SUBSCRIPTIONS = gql`
     }
   }
 `;
-
 export const GET_INVOICES = gql`
   query GetInvoices {
-    me {
+    invoices {
       id
-      subscriptions {
+      amount
+      createdAt
+      pdfUrl
+      subscription {
         id
         status
         plan {
@@ -112,23 +114,11 @@ export const GET_INVOICES = gql`
           price
           interval
         }
-        invoices {
-          id
-          amount
-          createdAt
-          pdfUrl
-          subscription {
-            id
-            status
-            plan {
-              id
-              name
-            }
-          }
-        }
       }
     }
-  }`
+  }
+`;
+
 
 
 // ----------------------

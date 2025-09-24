@@ -37,12 +37,21 @@ export const typeDefs = gql`
     updatedAt: String!
   }
 
+  type Invoice {
+  id: ID!
+  amount: Float!
+  pdfUrl: String
+  createdAt: String!
+  subscription: Subscription!
+}
+
   type Query {
     health: String!
     me: User                           # added me query
     users: [User!]!
     plans: [Plan!]!
     subscriptions: [Subscription!]!
+     invoices: [Invoice!]! 
   }
 
   type Mutation {
