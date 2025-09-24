@@ -44,9 +44,16 @@ export interface Subscription {
 export interface Invoice {
   id: string;
   amount: number;
-  createdAt: string;           // matches Prisma DateTime
-  pdfUrl?: string;             // optional PDF link
-  subscription: Subscription;  // single subscription per invoice
+  createdAt: string;         // matches Prisma DateTime
+  pdfUrl?: string;
+  subscription: {
+    id: string;
+    status: string;
+    plan: {
+      id: string;
+      name: string;
+    };
+  };
 }
 
 // ----------------------
@@ -94,22 +101,34 @@ export const GET_SUBSCRIPTIONS = gql`
 
 export const GET_INVOICES = gql`
   query GetInvoices {
-    invoices {
+    me {
       id
-      amount
-      pdfUrl
-      createdAt
-      subscription {
+      subscriptions {
         id
         status
         plan {
           id
           name
+          price
+          interval
+        }
+        invoices {
+          id
+          amount
+          createdAt
+          pdfUrl
+          subscription {
+            id
+            status
+            plan {
+              id
+              name
+            }
+          }
         }
       }
     }
-  }
-`;
+  }`
 
 
 // ----------------------

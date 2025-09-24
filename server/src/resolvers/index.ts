@@ -14,7 +14,7 @@ export const resolvers = {
     users: async () => prisma.user.findMany(),
     plans: async () => prisma.plan.findMany(),
     subscriptions: async () => prisma.subscription.findMany(),
-     invoices: async (_: any, __: any, ctx: any) => {
+    invoices: async (_: any, __: any, ctx: any) => {
     if (!ctx.user) throw new Error("Not authenticated");
     const userId = (ctx.user as any).id;
 
