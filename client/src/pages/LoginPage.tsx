@@ -6,6 +6,7 @@ import axios from "axios";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import FormInput from "../components/FormInput";
+import { client } from "../lib/apollolient";
 
 const loginSchema = z.object({
   email: z.string().email("Invalid email"),
@@ -25,28 +26,34 @@ export default function LoginPage() {
   const [loading, setLoading] = useState(false);
   const [errorMsg, setErrorMsg] = useState("");
 
-  const onSubmit = async (formData:any) => {
-    try {
-      setLoading(true);
-      setErrorMsg("");
+ const onSubmit = async (formData: any) => {
+  try {
+    setLoading(true);
+    setErrorMsg("");
 
-      const res = await axios.post(
-        "http://localhost:8080/api/auth/login",
-        formData,
-        { withCredentials: true }
-      );
+    const res = await axios.post(
+      "http://localhost:8080/api/auth/login",
+      formData,
+      { withCredentials: true }
+    );
 
-      console.log("✅ Login success:", res.data);
+    console.log("✅ Login success:", res.data);
 
-      // Navigate after success
-      navigate("/dashboard");
-    } catch (err:any) {
-      console.error("❌ Login error:", err.response?.data || err.message);
-      setErrorMsg(err.response?.data?.message || "Invalid email or password");
-    } finally {
-      setLoading(false);
-    }
-  };
+    // ✅ Save token
+    localStorage.setItem("token", res.data.token);
+
+    // ✅ Reset Apollo store so it uses the new token
+    await client.resetStore();
+
+    // ✅ Redirect to dashboard
+    navigate("/dashboard");
+  } catch (err: any) {
+    console.error("❌ Login error:", err.response?.data || err.message);
+    setErrorMsg(err.response?.data?.message || "Invalid email or password");
+  } finally {
+    setLoading(false);
+  }
+};
 
   return (
     <div className="min-h-screen flex justify-center items-center bg-gradient-to-br from-primary-dark to-dark px-6">
