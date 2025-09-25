@@ -1,38 +1,14 @@
-"use client";
+// src/pages/Invoices.tsx
 import { useQuery } from "@apollo/client/react";
-import { GET_INVOICES, type Invoice, type Subscription } from "../lib/api";
-
-interface GetInvoicesResult {
-  me: {
-    id: string;
-    subscriptions: (Subscription & { invoices: Invoice[] })[];
-  } | null;
-}
+import { GET_INVOICES } from "../lib/api";
+import type { Invoice } from "../lib/api";
 
 export default function Invoices() {
-  const { data, loading, error } = useQuery<GetInvoicesResult>(GET_INVOICES);
+  const { data, loading, error } = useQuery<{ invoices: Invoice[] }>(GET_INVOICES);
+  const invoices = data?.invoices || [];
 
   if (loading) return <p className="text-gray-400 p-6">Loading invoices...</p>;
-  if (error)
-    return (
-      <p className="text-red-500 p-6">
-        Error fetching invoices: {error.message}
-      </p>
-    );
-
-  if (!data?.me) return <p className="text-gray-400 p-6">Not authenticated</p>;
-
-  const invoices: Invoice[] =
-    data.me.subscriptions.flatMap((sub) =>
-      sub.invoices.map((inv) => ({
-        ...inv,
-        subscription: {
-          id: sub.id,
-          status: sub.status,
-          plan: sub.plan,
-        },
-      }))
-    );
+  if (error) return <p className="text-red-500 p-6">Error fetching invoices: {error.message}</p>;
 
   return (
     <div className="p-6 space-y-6">
@@ -43,7 +19,7 @@ export default function Invoices() {
       {invoices.length === 0 ? (
         <p className="text-gray-400 mt-4">No invoices found.</p>
       ) : (
-        <table className="min-w-full bg-gray-900 text-white rounded-lg shadow mt-4">
+        <table className="min-w-full bg-gray-900 text-white rounded-lg shadow mt-4 overflow-hidden">
           <thead className="bg-gray-800">
             <tr>
               <th className="px-4 py-2 text-left">ID</th>
@@ -58,11 +34,9 @@ export default function Invoices() {
             {invoices.map((inv) => (
               <tr key={inv.id} className="border-t border-gray-700">
                 <td className="px-4 py-2">{inv.id}</td>
-                <td className="px-4 py-2">{inv.subscription?.plan?.name || "-"}</td>
+                <td className="px-4 py-2">{inv.subscription?.plan?.name ?? "-"}</td>
                 <td className="px-4 py-2">${inv.amount.toFixed(2)}</td>
-                <td className="px-4 py-2">
-                  {new Date(inv.createdAt).toLocaleDateString()}
-                </td>
+                <td className="px-4 py-2">{new Date(inv.createdAt).toLocaleDateString()}</td>
                 <td
                   className={`px-4 py-2 font-semibold ${
                     inv.subscription?.status === "ACTIVE"
@@ -70,7 +44,7 @@ export default function Invoices() {
                       : "text-red-500"
                   }`}
                 >
-                  {inv.subscription?.status || "-"}
+                  {inv.subscription?.status ?? "-"}
                 </td>
                 <td className="px-4 py-2">
                   {inv.pdfUrl ? (

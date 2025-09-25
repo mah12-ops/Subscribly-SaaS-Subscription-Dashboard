@@ -1,26 +1,20 @@
-import { ApolloClient, InMemoryCache, HttpLink, gql } from "@apollo/client";
+// src/api.ts
+import {  gql } from "@apollo/client";
 
-// Apollo Client setup
-export const client = new ApolloClient({
-  link: new HttpLink({
-    uri: "http://localhost:8080/graphql", // match backend endpoint
-    credentials: "include", // if you use cookies/session
-  }),
-  cache: new InMemoryCache(),
-});
 
 // ----------------------
 // GraphQL Types
 // ----------------------
 export interface Me {
-  id: string;
+  id: number;
   name: string;
   email: string;
   role: string;
-  avatar?: string;
-  hasNewNotifications?: boolean;
+  avatar?: string;                  // optional
+  hasNewNotifications?: boolean;   // optional
   subscriptions: Subscription[];
 }
+
 
 export interface Plan {
   id: string;
@@ -33,19 +27,21 @@ export interface Plan {
 export interface Subscription {
   id: string;
   status: string;
+  userId: string;
+  planId: string;
   plan?: Plan;
-  invoice?: Invoice[]; // ⚠️ match backend naming
+
 }
 
 export interface Invoice {
   id: string;
   amount: number;
-  createdAt: string;
+  createdAt: string;         // matches Prisma DateTime
   pdfUrl?: string;
-  subscription?: {
+  subscription: {
     id: string;
     status: string;
-    plan?: {
+    plan: {
       id: string;
       name: string;
     };
@@ -62,14 +58,8 @@ export const GET_ME = gql`
       name
       email
       role
-      avatar
-      hasNewNotifications
-      subscriptions {
-        id
-        status
-        plan { id name price interval }
-        invoice { id amount createdAt pdfUrl }  # ⚠️ singular to match backend
-      }
+      avatar        # <-- Add this to your Prisma User model
+      hasNewNotifications 
     }
   }
 `;
@@ -97,34 +87,31 @@ export const GET_SUBSCRIPTIONS = gql`
         price
         interval
       }
-      invoice { id amount createdAt pdfUrl }  # ⚠️ singular
     }
   }
 `;
-
 export const GET_INVOICES = gql`
   query GetInvoices {
-    me {
+    invoices {
       id
-      subscriptions {
+      amount
+      createdAt
+      pdfUrl
+      subscription {
         id
         status
-        plan { id name price interval }
-        invoice {  # ⚠️ singular
+        plan {
           id
-          amount
-          createdAt
-          pdfUrl
-          subscription {
-            id
-            status
-            plan { id name }
-          }
+          name
+          price
+          interval
         }
       }
     }
   }
 `;
+
+
 
 // ----------------------
 // Mutations

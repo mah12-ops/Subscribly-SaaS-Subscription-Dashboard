@@ -52,7 +52,7 @@ model Subscription {
   endDate   DateTime?
   createdAt DateTime           @default(now())
   updatedAt DateTime           @updatedAt
-  invoice   Invoice[]
+  invoices   Invoice[]
 }
 
 model Invoice {

@@ -10,7 +10,7 @@ export const typeDefs = gql`
     name: String!
     email: String!
     role: Role!
-    subscriptions: [Subscription!]!      # added non-nullable subscriptions
+    subscriptions: [Subscription!]!      
     createdAt: String!
     updatedAt: String!
   }
@@ -21,7 +21,7 @@ export const typeDefs = gql`
     price: Float!
     interval: Interval!
     description: String
-    subscriptions: [Subscription!]!      # added subscriptions
+    subscriptions: [Subscription!]!
     createdAt: String!
     updatedAt: String!
   }
@@ -39,25 +39,25 @@ export const typeDefs = gql`
   }
 
   type Invoice {
-  id: ID!
-  amount: Float!
-  pdfUrl: String
-  createdAt: String!
-  subscription: Subscription!
-}
+    id: ID!
+    amount: Float!
+    pdfUrl: String
+    createdAt: String!
+    subscription: Subscription!
+  }
 
   type Query {
     health: String!
-    me: User                           # added me query
+    me: User
     users: [User!]!
     plans: [Plan!]!
     subscriptions: [Subscription!]!
-     invoices: [Invoice!]! 
+    invoices: [Invoice!]!       # make sure this matches your resolver name
   }
 
   type Mutation {
-    signup(name: String!, email: String!, password: String!): String!   # returns JWT
-    login(email: String!, password: String!): String!                 # returns JWT
+    signup(name: String!, email: String!, password: String!): String!
+    login(email: String!, password: String!): String!
     createPlan(name: String!, price: Float!, interval: Interval!, description: String): Plan!
     subscribe(planId: ID!): Subscription!
     cancelSubscription(subscriptionId: ID!): Subscription!

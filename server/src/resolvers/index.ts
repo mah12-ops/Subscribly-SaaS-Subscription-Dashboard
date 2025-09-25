@@ -7,6 +7,7 @@ export const resolvers = {
   Query: {
     health: () => "ok",
 
+    // Returns the current logged-in user with subscriptions and invoices
     me: async (_: any, __: any, ctx: any) => {
       if (!ctx.user) return null;
       const id = ctx.user.id;
@@ -14,12 +15,13 @@ export const resolvers = {
         where: { id },
         include: {
           subscriptions: {
-            include: { plan: true, invoice: true },
+            include: { plan: true, invoices: true }, // invoices array
           },
         },
       });
     },
 
+    // Returns all invoices of the current user
     invoices: async (_: any, __: any, ctx: any) => {
       if (!ctx.user) throw new Error("Not authenticated");
       const userId = ctx.user.id;
@@ -29,6 +31,11 @@ export const resolvers = {
         orderBy: { createdAt: "desc" },
       });
     },
+
+    // Optional: get all users
+    users: async () => prisma.user.findMany(),
+    plans: async () => prisma.plan.findMany(),
+    subscriptions: async () => prisma.subscription.findMany({ include: { plan: true, user: true } }),
   },
 
   Mutation: {
@@ -51,6 +58,33 @@ export const resolvers = {
       if (!ok) throw new Error("Invalid credentials");
       return signToken({ id: user.id, email: user.email, role: user.role });
     },
+
+    // Example: create a plan
+    createPlan: async (_: any, args: any) => {
+      const { name, price, interval, description } = args;
+      return prisma.plan.create({
+        data: { name, price, interval, description },
+      });
+    },
+
+    // Subscribe a user to a plan
+    subscribe: async (_: any, { planId }: any, ctx: any) => {
+      if (!ctx.user) throw new Error("Not authenticated");
+      return prisma.subscription.create({
+        data: { userId: ctx.user.id, planId, status: "ACTIVE" },
+        include: { plan: true, user: true },
+      });
+    },
+
+    // Cancel a subscription
+    cancelSubscription: async (_: any, { subscriptionId }: any, ctx: any) => {
+      if (!ctx.user) throw new Error("Not authenticated");
+      return prisma.subscription.update({
+        where: { id: subscriptionId },
+        data: { status: "CANCELLED" },
+        include: { plan: true, user: true },
+      });
+    },
   },
 
   Subscription: {
@@ -60,7 +94,7 @@ export const resolvers = {
 
   User: {
     subscriptions: (parent: any) =>
-      prisma.subscription.findMany({ where: { userId: parent.id }, include: { plan: true, invoice: true } }),
+      prisma.subscription.findMany({ where: { userId: parent.id }, include: { plan: true, invoices: true } }),
   },
 
   Invoice: {
