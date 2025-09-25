@@ -7,52 +7,33 @@ export const resolvers = {
   Query: {
     health: () => "ok",
 
-    // ✅ Return logged-in user with subscriptions and invoices
     me: async (_: any, __: any, ctx: any) => {
       if (!ctx.user) return null;
-      const id = (ctx.user as any).id;
-
+      const id = ctx.user.id;
       return prisma.user.findUnique({
         where: { id },
         include: {
           subscriptions: {
-            include: {
-              plan: true,
-              invoice: true,
-            },
+            include: { plan: true, invoice: true },
           },
         },
       });
     },
 
-    users: async () => prisma.user.findMany(),
-    plans: async () => prisma.plan.findMany(),
-    subscriptions: async () => prisma.subscription.findMany(),
-
-    // ✅ Return only invoices for subscriptions of logged-in user
     invoices: async (_: any, __: any, ctx: any) => {
       if (!ctx.user) throw new Error("Not authenticated");
-      const userId = (ctx.user as any).id;
-
+      const userId = ctx.user.id;
       return prisma.invoice.findMany({
-        where: {
-          subscription: {
-            userId,
-          },
-        },
+        where: { subscription: { userId } },
+        include: { subscription: { include: { plan: true } } },
         orderBy: { createdAt: "desc" },
-        include: {
-          subscription: {
-            include: { plan: true },
-          },
-        },
       });
     },
   },
 
   Mutation: {
     signup: async (_: any, args: any) => {
-      const validated = signupSchema.parse(args); // throws if invalid
+      const validated = signupSchema.parse(args);
       const existing = await prisma.user.findUnique({ where: { email: validated.email } });
       if (existing) throw new Error("Email already in use");
       const hashed = await hashPassword(validated.password);
@@ -70,38 +51,6 @@ export const resolvers = {
       if (!ok) throw new Error("Invalid credentials");
       return signToken({ id: user.id, email: user.email, role: user.role });
     },
-
-    createPlan: async (_: any, args: any, ctx: any) => {
-      if (!ctx.user || (ctx.user as any).role !== "ADMIN") throw new Error("Not authorized");
-      return prisma.plan.create({
-        data: {
-          name: args.name,
-          price: args.price,
-          interval: args.interval,
-          description: args.description || null,
-        },
-      });
-    },
-
-    subscribe: async (_: any, args: any, ctx: any) => {
-      if (!ctx.user) throw new Error("Not authenticated");
-      const userId = (ctx.user as any).id;
-      return prisma.subscription.create({
-        data: {
-          userId,
-          planId: args.planId,
-          status: "ACTIVE",
-        },
-      });
-    },
-
-    cancelSubscription: async (_: any, args: any, ctx: any) => {
-      if (!ctx.user) throw new Error("Not authenticated");
-      return prisma.subscription.update({
-        where: { id: args.subscriptionId },
-        data: { status: "CANCELLED" },
-      });
-    },
   },
 
   Subscription: {
@@ -111,21 +60,11 @@ export const resolvers = {
 
   User: {
     subscriptions: (parent: any) =>
-      prisma.subscription.findMany({
-        where: { userId: parent.id },
-        include: { plan: true, invoice: true },
-      }),
-  },
-
-  Plan: {
-    subscriptions: (parent: any) => prisma.subscription.findMany({ where: { planId: parent.id } }),
+      prisma.subscription.findMany({ where: { userId: parent.id }, include: { plan: true, invoice: true } }),
   },
 
   Invoice: {
     subscription: (parent: any) =>
-      prisma.subscription.findUnique({
-        where: { id: parent.subscriptionId },
-        include: { plan: true },
-      }),
+      prisma.subscription.findUnique({ where: { id: parent.subscriptionId }, include: { plan: true } }),
   },
 };

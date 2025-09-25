@@ -1,18 +1,17 @@
-import { prisma } from "./prisma/client";
 import { verifyToken } from "./utils/jwt";
 
-export type Context = {
-  prisma: typeof prisma;
-  user?: any | null;
-};
-
-export const createContext = ({ req }: { req: any }): Context => {
-  const header = req.headers.authorization;
+export const context = ({ req }: any) => {
+  const authHeader = req.headers.authorization || "";
   let user = null;
-  if (header) {
-    const token = header.split(" ")[1];
-    const payload = token ? verifyToken(token) : null;
-    user = payload;
+
+  if (authHeader.startsWith("Bearer ")) {
+    const token = authHeader.replace("Bearer ", "");
+    try {
+      user = verifyToken(token); // { id, email, role }
+    } catch (err) {
+      console.log("Invalid token:", err);
+    }
   }
-  return { prisma, user };
+
+  return { user }; // must be { user } for resolvers
 };

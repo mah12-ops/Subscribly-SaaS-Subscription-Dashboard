@@ -2,7 +2,6 @@
 import { useQuery } from "@apollo/client/react";
 import { GET_INVOICES, type Invoice, type Subscription } from "../lib/api";
 
-// Type for query result
 interface GetInvoicesResult {
   me: {
     id: string;
@@ -23,7 +22,6 @@ export default function Invoices() {
 
   if (!data?.me) return <p className="text-gray-400 p-6">Not authenticated</p>;
 
-  // Flatten invoices from all subscriptions
   const invoices: Invoice[] =
     data.me.subscriptions.flatMap((sub) =>
       sub.invoices.map((inv) => ({
@@ -63,9 +61,7 @@ export default function Invoices() {
                 <td className="px-4 py-2">{inv.subscription?.plan?.name || "-"}</td>
                 <td className="px-4 py-2">${inv.amount.toFixed(2)}</td>
                 <td className="px-4 py-2">
-                  {inv.createdAt
-                    ? new Date(inv.createdAt).toLocaleDateString()
-                    : "-"}
+                  {new Date(inv.createdAt).toLocaleDateString()}
                 </td>
                 <td
                   className={`px-4 py-2 font-semibold ${
