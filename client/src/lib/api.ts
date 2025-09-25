@@ -88,6 +88,20 @@ export const GET_PLANS = gql`
   }
 `;
 
+export const GET_ACTIVE_SUBSCRIPTION = gql`
+  query GetActiveSubscription {
+    activeSubscription {
+      id
+      status
+      plan {
+        id
+        name
+        price
+        interval
+      }
+    }
+  }
+`;
 export const GET_SUBSCRIPTIONS = gql`
   query GetSubscriptions {
     subscriptions {
@@ -141,7 +155,7 @@ export const LOGIN = gql`
 `;
 
 export const SUBSCRIBE = gql`
-  mutation Subscribe($planId: String!) {
+  mutation Subscribe($planId: ID!) {
     subscribe(planId: $planId) {
       id
       status
@@ -152,6 +166,7 @@ export const SUBSCRIBE = gql`
     }
   }
 `;
+
 
 export const CANCEL_SUBSCRIPTION = gql`
   mutation CancelSubscription($subscriptionId: String!) {

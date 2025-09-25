@@ -39,6 +39,7 @@ export const typeDefs = gql`
     updatedAt: String!
     invoices: [Invoice!]! 
   }
+ 
 
   type Invoice {
     id: ID!
@@ -55,6 +56,7 @@ export const typeDefs = gql`
     plans: [Plan!]!
     subscriptions: [Subscription!]!
     invoices: [Invoice!]!       # make sure this matches your resolver name
+    activeSubscription: Subscription   
   }
 
   type Mutation {

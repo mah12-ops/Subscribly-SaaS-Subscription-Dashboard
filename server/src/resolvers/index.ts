@@ -35,13 +35,32 @@ export const resolvers = {
     // Optional: get all users
     users: async () => prisma.user.findMany(),
     plans: async () => prisma.plan.findMany(),
-    subscriptions: async () => prisma.subscription.findMany({ include: { plan: true, user: true } }),
+    subscriptions: async () =>
+      prisma.subscription.findMany({ include: { plan: true, user: true } }),
+    activeSubscription: async (_: any, __: any, ctx: any) => {
+      if (!ctx.user) {
+        throw new Error("Not authenticated");
+      }
+
+      // Find the active subscription for this user
+      return ctx.prisma.subscription.findFirst({
+        where: {
+          userId: ctx.user.id,
+          status: "ACTIVE",
+        },
+        include: {
+          plan: true,
+        },
+      });
+    },
   },
 
   Mutation: {
     signup: async (_: any, args: any) => {
       const validated = signupSchema.parse(args);
-      const existing = await prisma.user.findUnique({ where: { email: validated.email } });
+      const existing = await prisma.user.findUnique({
+        where: { email: validated.email },
+      });
       if (existing) throw new Error("Email already in use");
       const hashed = await hashPassword(validated.password);
       const user = await prisma.user.create({
@@ -52,15 +71,21 @@ export const resolvers = {
 
     login: async (_: any, args: any) => {
       const validated = loginSchema.parse(args);
-      const user = await prisma.user.findUnique({ where: { email: validated.email } });
+      const user = await prisma.user.findUnique({
+        where: { email: validated.email },
+      });
       if (!user) throw new Error("User not found");
       const ok = await comparePassword(validated.password, user.password);
       if (!ok) throw new Error("Invalid credentials");
       return signToken({ id: user.id, email: user.email, role: user.role });
     },
 
-    // Example: create a plan
-    createPlan: async (_: any, args: any) => {
+    // ✅ createPlan restricted to ADMIN only
+    createPlan: async (_: any, args: any, ctx: any) => {
+      if (!ctx.user || ctx.user.role !== "ADMIN") {
+        throw new Error("Not authorized to create plans");
+      }
+
       const { name, price, interval, description } = args;
       return prisma.plan.create({
         data: { name, price, interval, description },
@@ -93,7 +118,7 @@ export const resolvers = {
       const updateData: any = {};
       if (name !== undefined) updateData.name = name;
       if (avatar !== undefined) updateData.avatar = avatar;
-      
+
       return prisma.user.update({
         where: { id: ctx.user.id },
         data: updateData,
@@ -107,17 +132,25 @@ export const resolvers = {
   },
 
   Subscription: {
-    user: (parent: any) => prisma.user.findUnique({ where: { id: parent.userId } }),
-    plan: (parent: any) => prisma.plan.findUnique({ where: { id: parent.planId } }),
+    user: (parent: any) =>
+      prisma.user.findUnique({ where: { id: parent.userId } }),
+    plan: (parent: any) =>
+      prisma.plan.findUnique({ where: { id: parent.planId } }),
   },
 
   User: {
     subscriptions: (parent: any) =>
-      prisma.subscription.findMany({ where: { userId: parent.id }, include: { plan: true, invoices: true } }),
+      prisma.subscription.findMany({
+        where: { userId: parent.id },
+        include: { plan: true, invoices: true },
+      }),
   },
 
   Invoice: {
     subscription: (parent: any) =>
-      prisma.subscription.findUnique({ where: { id: parent.subscriptionId }, include: { plan: true } }),
+      prisma.subscription.findUnique({
+        where: { id: parent.subscriptionId },
+        include: { plan: true },
+      }),
   },
 };
