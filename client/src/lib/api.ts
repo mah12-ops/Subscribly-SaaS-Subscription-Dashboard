@@ -40,7 +40,7 @@ export interface Subscription {
   plan?: Plan;
 
 }
-interface Invoice {
+export interface Invoice {
   id: string;
   amount: number;
   createdAt: string;
@@ -98,7 +98,7 @@ export const GET_SUBSCRIPTIONS = gql`
     }
   }
 `;
-const GET_INVOICES = gql`
+export const GET_INVOICES = gql`
   query GetInvoices {
     me {
       id

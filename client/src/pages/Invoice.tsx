@@ -1,12 +1,40 @@
+"use client";
+import { useQuery } from "@apollo/client/react";
+import { GET_INVOICES, type Invoice, type Subscription } from "../lib/api";
+
+// Type for query result
+interface GetInvoicesResult {
+  me: {
+    id: string;
+    subscriptions: (Subscription & { invoices: Invoice[] })[];
+  } | null;
+}
+
 export default function Invoices() {
-  const { data, loading, error } = useQuery(GET_INVOICES);
+  const { data, loading, error } = useQuery<GetInvoicesResult>(GET_INVOICES);
 
   if (loading) return <p className="text-gray-400 p-6">Loading invoices...</p>;
-  if (error) return <p className="text-red-500 p-6">Error fetching invoices: {error.message}</p>;
+  if (error)
+    return (
+      <p className="text-red-500 p-6">
+        Error fetching invoices: {error.message}
+      </p>
+    );
 
-  // ✅ flatten invoices from all subscriptions
+  if (!data?.me) return <p className="text-gray-400 p-6">Not authenticated</p>;
+
+  // Flatten invoices from all subscriptions
   const invoices: Invoice[] =
-    data?.me?.subscriptions?.flatMap((sub: any) => sub.invoices || []) || [];
+    data.me.subscriptions.flatMap((sub) =>
+      sub.invoices.map((inv) => ({
+        ...inv,
+        subscription: {
+          id: sub.id,
+          status: sub.status,
+          plan: sub.plan,
+        },
+      }))
+    );
 
   return (
     <div className="p-6 space-y-6">
@@ -34,10 +62,16 @@ export default function Invoices() {
                 <td className="px-4 py-2">{inv.id}</td>
                 <td className="px-4 py-2">{inv.subscription?.plan?.name || "-"}</td>
                 <td className="px-4 py-2">${inv.amount.toFixed(2)}</td>
-                <td className="px-4 py-2">{new Date(inv.createdAt).toLocaleDateString()}</td>
+                <td className="px-4 py-2">
+                  {inv.createdAt
+                    ? new Date(inv.createdAt).toLocaleDateString()
+                    : "-"}
+                </td>
                 <td
                   className={`px-4 py-2 font-semibold ${
-                    inv.subscription?.status === "ACTIVE" ? "text-emerald-400" : "text-red-500"
+                    inv.subscription?.status === "ACTIVE"
+                      ? "text-emerald-400"
+                      : "text-red-500"
                   }`}
                 >
                   {inv.subscription?.status || "-"}

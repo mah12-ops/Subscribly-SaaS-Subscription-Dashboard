@@ -35,6 +35,7 @@ export const typeDefs = gql`
     endDate: String
     createdAt: String!
     updatedAt: String!
+    invoices: [Invoice!]! 
   }
 
   type Invoice {
