@@ -10,6 +10,8 @@ export const typeDefs = gql`
     name: String!
     email: String!
     role: Role!
+    avatar: String
+    hasNewNotifications: Boolean!
     subscriptions: [Subscription!]!      
     createdAt: String!
     updatedAt: String!
@@ -61,5 +63,6 @@ export const typeDefs = gql`
     createPlan(name: String!, price: Float!, interval: Interval!, description: String): Plan!
     subscribe(planId: ID!): Subscription!
     cancelSubscription(subscriptionId: ID!): Subscription!
+    updateProfile(name: String, avatar: String): User!
   }
 `;

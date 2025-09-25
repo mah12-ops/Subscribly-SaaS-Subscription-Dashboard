@@ -6,9 +6,10 @@ import bodyParser from "body-parser";
 import authRoutes from "./routes/api";
 import { typeDefs } from "./schema/typeDefs";
 import { resolvers } from "./resolvers";
-import { createContext } from "./context";
+import { context } from "./context";
 import { handleStripeWebhook } from "./controllers/webhook";
 import rateLimit from "express-rate-limit";
+import { verifyToken } from "./utils/jwt";
 
 
 const PORT = process.env.PORT ;
@@ -53,12 +54,22 @@ app.use("/graphql", (req, _res, next) => {
   app.post("/webhooks/stripe", bodyParser.raw({ type: "application/json" }), handleStripeWebhook);
 
   // Apollo GraphQL
-  const server = new ApolloServer({
-    typeDefs,
-    resolvers,
-    context: ({ req }) => createContext({ req })
-  });
+ const server = new ApolloServer({
+  typeDefs,
+  resolvers,
+  context: ({ req }) => {
+    const authHeader = req.headers.authorization || "";
+    const token = authHeader.replace("Bearer ", "");
+    if (!token) return { user: null };
 
+    try {
+      const user = verifyToken(token); // returns { id, email, role }
+      return { user };
+    } catch {
+      return { user: null };
+    }
+  },
+});
   await server.start();
 
   // cast to any to avoid type mismatch errors with some @types/express versions

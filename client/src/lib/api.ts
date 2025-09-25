@@ -44,6 +44,8 @@ export interface Invoice {
     plan: {
       id: string;
       name: string;
+      price: number;
+      interval: string;
     };
   };
 }
@@ -58,8 +60,18 @@ export const GET_ME = gql`
       name
       email
       role
-      avatar        # <-- Add this to your Prisma User model
-      hasNewNotifications 
+      avatar
+      hasNewNotifications
+      subscriptions {
+        id
+        status
+        plan {
+          id
+          name
+          price
+          interval
+        }
+      }
     }
   }
 `;
@@ -146,6 +158,19 @@ export const CANCEL_SUBSCRIPTION = gql`
     cancelSubscription(subscriptionId: $subscriptionId) {
       id
       status
+    }
+  }
+`;
+
+export const UPDATE_PROFILE = gql`
+  mutation UpdateProfile($name: String, $avatar: String) {
+    updateProfile(name: $name, avatar: $avatar) {
+      id
+      name
+      email
+      role
+      avatar
+      hasNewNotifications
     }
   }
 `;

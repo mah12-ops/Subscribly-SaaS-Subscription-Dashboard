@@ -85,6 +85,25 @@ export const resolvers = {
         include: { plan: true, user: true },
       });
     },
+
+    // Update user profile
+    updateProfile: async (_: any, args: any, ctx: any) => {
+      if (!ctx.user) throw new Error("Not authenticated");
+      const { name, avatar } = args;
+      const updateData: any = {};
+      if (name !== undefined) updateData.name = name;
+      if (avatar !== undefined) updateData.avatar = avatar;
+      
+      return prisma.user.update({
+        where: { id: ctx.user.id },
+        data: updateData,
+        include: {
+          subscriptions: {
+            include: { plan: true, invoices: true },
+          },
+        },
+      });
+    },
   },
 
   Subscription: {

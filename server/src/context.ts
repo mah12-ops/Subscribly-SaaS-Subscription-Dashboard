@@ -1,18 +1,9 @@
-import { prisma } from "./prisma/client";
-import { verifyToken } from "./utils/jwt";
+import { Request } from "express";
 
-export type Context = {
-  prisma: typeof prisma;
-  user?: any | null;
-};
+export interface Context {
+  req: Request & { user?: { id: number; email: string; role: string } };
+}
 
-export const createContext = ({ req }: { req: any }): Context => {
-  const header = req.headers.authorization;
-  let user = null;
-  if (header) {
-    const token = header.split(" ")[1];
-    const payload = token ? verifyToken(token) : null;
-    user = payload;
-  }
-  return { prisma, user };
-};
+export const context = ({ req }: { req: Request }) => ({
+  user: req.user || null,
+});
