@@ -63,7 +63,7 @@ export default function Plans() {
                 className={`mt-4 px-4 py-2 rounded transition ${
                   isActive
                     ? "bg-gray-600 cursor-not-allowed"
-                    : "bg-emerald-600 hover:bg-emerald-700"
+                    : "bg-purple-500 hover:bg-purple-700"
                 }`}
                 onClick={() => subscribe({ variables: { planId: plan.id } })}
               >

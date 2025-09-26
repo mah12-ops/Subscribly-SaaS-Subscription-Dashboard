@@ -46,6 +46,7 @@ export const typeDefs = gql`
     amount: Float!
     pdfUrl: String
     createdAt: String!
+     status: String!
     subscription: Subscription!
   }
 

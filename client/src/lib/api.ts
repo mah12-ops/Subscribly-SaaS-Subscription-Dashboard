@@ -48,6 +48,7 @@ export interface Invoice {
       interval: string;
     };
   };
+    status?: string; 
 }
 
 // ----------------------
@@ -169,7 +170,7 @@ export const SUBSCRIBE = gql`
 
 
 export const CANCEL_SUBSCRIPTION = gql`
-  mutation CancelSubscription($subscriptionId: String!) {
+  mutation CancelSubscription($subscriptionId: ID!) {
     cancelSubscription(subscriptionId: $subscriptionId) {
       id
       status

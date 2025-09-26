@@ -1,12 +1,23 @@
+// src/pages/Subscriptions.tsx
+import React from "react";
 import { useQuery, useMutation } from "@apollo/client/react";
 import { GET_SUBSCRIPTIONS, CANCEL_SUBSCRIPTION } from "../lib/api";
 import type { Subscription } from "../lib/api";
 
 export default function Subscriptions() {
-  const { data, refetch } = useQuery<{ subscriptions: Subscription[] }>(GET_SUBSCRIPTIONS);
-  const [cancelSubscription] = useMutation(CANCEL_SUBSCRIPTION, { onCompleted: () => refetch() });
+  const { data, loading, error, refetch } = useQuery<{ subscriptions: Subscription[] }>(GET_SUBSCRIPTIONS);
+  const [cancelSubscription, { loading: cancelling }] = useMutation(CANCEL_SUBSCRIPTION, {
+    onCompleted: () => refetch(),
+    onError: (err) => {
+      console.error("Cancel failed:", err.message);
+      alert("Failed to cancel subscription. Please try again.");
+    },
+  });
 
-  const subscriptions = data?.subscriptions || [];
+  if (loading) return <p className="text-gray-400 p-6">Loading subscriptions...</p>;
+  if (error) return <p className="text-red-500 p-6">Error fetching subscriptions: {error.message}</p>;
+
+  const activeSubscriptions = data?.subscriptions?.filter(sub => sub.status === "ACTIVE") || [];
 
   return (
     <div className="p-6 space-y-6">
@@ -14,19 +25,35 @@ export default function Subscriptions() {
         Your Subscriptions
       </h1>
 
-      {subscriptions.length === 0 ? (
-        <p className="text-gray-400">You have no active subscriptions.</p>
+      {activeSubscriptions.length === 0 ? (
+        <p className="text-gray-400 mt-6">You have no active subscriptions.</p>
       ) : (
-        <div className="grid md:grid-cols-2 gap-6">
-          {subscriptions.map((sub) => (
-            <div key={sub.id} className="p-4 rounded-xl bg-gray-900 text-white shadow hover:shadow-lg transition">
-              <h2 className="text-lg font-semibold">{sub.plan?.name}</h2>
-              <p className="mt-1 text-gray-400">Status: {sub.status}</p>
+        <div className="grid md:grid-cols-2 gap-6 mt-6">
+          {activeSubscriptions.map((sub) => (
+            <div
+              key={sub.id}
+              className="p-6 bg-gray-900 rounded-xl shadow hover:shadow-lg transition flex flex-col justify-between"
+            >
+              <div>
+                <h2 className="text-xl font-semibold">{sub.plan?.name}</h2>
+                <p className="text-gray-400 mt-2">Status: <span className="text-green-400">{sub.status}</span></p>
+                {sub.plan?.price && (
+                  <p className="mt-2 font-bold text-lg">${sub.plan.price}/{sub.plan.interval}</p>
+                )}
+              </div>
+
               <button
-                className="mt-2 px-3 py-1 bg-red-600 rounded hover:bg-red-700 transition"
-                onClick={() => cancelSubscription({ variables: { subscriptionId: sub.id } })}
+                disabled={cancelling}
+                onClick={() =>
+                  cancelSubscription({ variables: { subscriptionId: sub.id } })
+                }
+                className={`mt-4 px-4 w-48 py-2 rounded-lg transition text-white ${
+                  cancelling
+                    ? "bg-gray-600  cursor-not-allowed"
+                    : "bg-purple-500 hover:bg-purple-700"
+                }`}
               >
-                Cancel
+                {cancelling ? "Cancelling..." : "Cancel Subscription"}
               </button>
             </div>
           ))}

@@ -35,8 +35,17 @@ export const resolvers = {
     // Optional: get all users
     users: async () => prisma.user.findMany(),
     plans: async () => prisma.plan.findMany(),
-    subscriptions: async () =>
-      prisma.subscription.findMany({ include: { plan: true, user: true } }),
+   subscriptions: async (_: any, __: any, ctx: any) => {
+  if (!ctx.user) throw new Error("Not authenticated");
+  return prisma.subscription.findMany({
+    where: {
+      userId: ctx.user.id,
+      status: "ACTIVE", // 🚀 Only return active ones
+    },
+    include: { plan: true },
+  });
+},
+
     activeSubscription: async (_: any, __: any, ctx: any) => {
       if (!ctx.user) {
         throw new Error("Not authenticated");
